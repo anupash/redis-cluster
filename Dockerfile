@@ -8,5 +8,4 @@ RUN apt-get -y update \
   && apt-get -y clean
 ADD redis-trib.rb /usr/local/bin/redis-trib
 RUN chmod 755 /usr/local/bin/redis-trib
-CMD sed -i 's/\/data\/nodes.conf/\/data\/nodes-'$HOSTNAME'.conf/g; s/dump.rdb/dump-'$HOSTNAME'.rdb/g' /conf/redis.conf \
-  && redis-server /conf/redis.conf
+CMD redis-server /conf/redis.conf
