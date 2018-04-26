@@ -35,7 +35,7 @@ spec:
   selector:
     app: redis-cluster
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: redis-cluster
@@ -44,14 +44,19 @@ metadata:
 spec:
   serviceName: redis-cluster
   replicas: 2
+  selector:
+    matchLabels:
+      app: redis-cluster
   template:
     metadata:
       labels:
         app: redis-cluster
     spec:
+      imagePullSecrets:
+      - name: private-registry-auth-secret
       containers:
       - name: redis-cluster
-        image: docker-registry.yieldlab.lan/redis-cluster:v4.1-alpine
+        image: docker-registry.yieldlab.lan/redis-cluster:v4.2-alpine
         ports:
         - containerPort: 6379
           name: client
@@ -73,6 +78,13 @@ spec:
             - "redis-cli -h $(hostname) ping"
           initialDelaySeconds: 20
           periodSeconds: 3
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: 2Gi
+          requests:
+            cpu: "0.5"
+            memory: 1Gi
         volumeMounts:
         - name: conf
           mountPath: /conf
@@ -87,8 +99,6 @@ spec:
           items: 
           - key: redis.conf
             path: redis.conf
-      imagePullSecrets:
-      - name: private-registry-auth-secret
   volumeClaimTemplates:
   - metadata:
       name: data
@@ -101,4 +111,4 @@ spec:
       storageClassName: nonreplicated
       resources:
         requests:
-          storage: 1Gi
+          storage: 2Gi
