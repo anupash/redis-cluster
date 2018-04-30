@@ -6,6 +6,8 @@ RUN set -ex \
     \
     && apk update \
     \
+    && apk upgrade \
+    \
     && apk --update --no-cache --virtual add \
             ruby \
             ruby-irb \
@@ -22,4 +24,8 @@ RUN set -ex \
     && cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime \
     \
     && chmod 755 /usr/local/bin/redis-trib
+    \
+    && apk del tzdata; \
+    \
+    && rm -rf /var/cache/apk/* 
 CMD redis-server /conf/redis.conf
